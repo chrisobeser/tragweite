@@ -1,0 +1,131 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 231" width="400" height="462">
+  <!-- Hex sticker: the windkanal cow in ballistic flight; tragweite
+       measures how far a design carries. Series continuity: launched
+       from a tiny wind tunnel (bottom left), range marked on a ruler. -->
+  <defs>
+    <clipPath id="hex">
+      <polygon points="100,3 197,60.5 197,170.5 100,228 3,170.5 3,60.5"/>
+    </clipPath>
+    <linearGradient id="cfd" gradientUnits="userSpaceOnUse"
+                    x1="84" y1="0" x2="148" y2="0">
+      <stop offset="0"    stop-color="#e63b2e"/>
+      <stop offset="0.22" stop-color="#f5a623"/>
+      <stop offset="0.42" stop-color="#f7e733"/>
+      <stop offset="0.62" stop-color="#52c462"/>
+      <stop offset="0.80" stop-color="#35b8c9"/>
+      <stop offset="1"    stop-color="#2f6fd6"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <polygon points="100,3 197,60.5 197,170.5 100,228 3,170.5 3,60.5"
+           fill="#10263d"/>
+
+  <g clip-path="url(#hex)">
+    <!-- Ballistic trajectory (explicit dots; dash rendering is unreliable) -->
+    <g fill="#7fd1e0" opacity="0.85">
+      <circle cx="48.8" cy="127" r="2.1"/>
+      <circle cx="61.7" cy="109.3" r="2.1"/>
+      <circle cx="74.6" cy="96.8" r="2.1"/>
+      <circle cx="87.5" cy="89.6" r="2.1"/>
+      <circle cx="100.5" cy="87.5" r="2.1"/>
+      <circle cx="113.5" cy="90.7" r="2.1"/>
+      <circle cx="126.6" cy="99.2" r="2.1"/>
+      <circle cx="139.7" cy="112.9" r="2.1"/>
+      <circle cx="152.9" cy="131.9" r="2.1"/>
+      <circle cx="160.5" cy="144.5" r="2.1"/>
+    </g>
+
+    <!-- Tiny wind tunnel as launcher (series continuity) -->
+    <g transform="rotate(-38 30 152)">
+      <rect x="12" y="144" width="34" height="17" rx="4"
+            fill="#16324c" stroke="#7fd1e0" stroke-width="2"/>
+      <path d="M 17 149 h 10 M 17 153 h 14 M 17 157 h 10" fill="none"
+            stroke="#7fd1e0" stroke-width="1.6" stroke-linecap="round" opacity="0.8"/>
+    </g>
+
+    <!-- Ground ruler -->
+    <line x1="14" y1="166" x2="186" y2="166" stroke="#c46a1f"
+          stroke-width="3.5" stroke-linecap="round" opacity="0.95"/>
+    <g stroke="#e8d9a0" stroke-width="1.8" stroke-linecap="round" opacity="0.9">
+      <line x1="36"  y1="166" x2="36"  y2="159"/>
+      <line x1="62"  y1="166" x2="62"  y2="161.5"/>
+      <line x1="88"  y1="166" x2="88"  y2="159"/>
+      <line x1="114" y1="166" x2="114" y2="161.5"/>
+      <line x1="140" y1="166" x2="140" y2="159"/>
+      <line x1="166" y1="166" x2="166" y2="159"/>
+    </g>
+
+    <!-- Range: double-headed arrow under the ruler -->
+    <g stroke="#7fd1e0" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.9">
+      <line x1="36" y1="174" x2="166" y2="174"/>
+      <path d="M 42 170.5 L 36 174 L 42 177.5"/>
+      <path d="M 160 170.5 L 166 174 L 160 177.5"/>
+    </g>
+
+    <!-- Landing flag -->
+    <g>
+      <line x1="166" y1="156" x2="166" y2="136" stroke="#e8d9a0"
+            stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M 166 136 L 182 141 L 166 147 z" fill="#c92a1e"
+            stroke="#16324c" stroke-width="1.5"/>
+    </g>
+
+    <!-- The flying cow (slightly past apex, nose down-range) -->
+    <g transform="rotate(14 116 72)">
+      <!-- tail streaming behind -->
+      <path d="M 140 66 C 152 60, 158 64, 166 58" fill="none"
+            stroke="url(#cfd)" stroke-width="3.5" stroke-linecap="round"/>
+      <circle cx="167" cy="57" r="3.2" fill="#2f6fd6"/>
+      <!-- legs splayed back (flight pose) -->
+      <g fill="url(#cfd)" stroke="#16324c" stroke-width="1.8">
+        <rect x="100" y="80" width="6.5" height="22" rx="3" transform="rotate(38 103 80)"/>
+        <rect x="112" y="82" width="6.5" height="22" rx="3" transform="rotate(46 115 82)"/>
+        <rect x="126" y="82" width="6.5" height="22" rx="3" transform="rotate(52 129 82)"/>
+        <rect x="136" y="78" width="6.5" height="20" rx="3" transform="rotate(58 139 78)"/>
+      </g>
+      <g fill="#16324c">
+        <rect x="86"  y="94" width="7.5" height="5" rx="2" transform="rotate(38 89 94)"/>
+        <rect x="98"  y="98" width="7.5" height="5" rx="2" transform="rotate(46 101 98)"/>
+        <rect x="112" y="100" width="7.5" height="5" rx="2" transform="rotate(52 115 100)"/>
+        <rect x="124" y="96" width="7.5" height="5" rx="2" transform="rotate(58 127 96)"/>
+      </g>
+      <!-- body -->
+      <ellipse cx="116" cy="72" rx="31" ry="18" fill="url(#cfd)"
+               stroke="#16324c" stroke-width="2.2"/>
+      <!-- head down-range -->
+      <g>
+        <path d="M 84 52 C 92 46, 100 46, 103 51 C 97 54, 90 56, 84 56 z"
+              fill="url(#cfd)" stroke="#16324c" stroke-width="1.8"/>
+        <path d="M 80 50 q -5 -6 1 -9" fill="none" stroke="#e8d9a0"
+              stroke-width="3.2" stroke-linecap="round"/>
+        <path d="M 88 47 q 0 -7 6 -8" fill="none" stroke="#e8d9a0"
+              stroke-width="3.2" stroke-linecap="round"/>
+        <circle cx="78" cy="62" r="13.5" fill="url(#cfd)"
+                stroke="#16324c" stroke-width="2.2"/>
+        <ellipse cx="69" cy="68" rx="9.5" ry="6.5" fill="#c92a1e"
+                 stroke="#16324c" stroke-width="1.6"/>
+        <circle cx="65.5" cy="66.5" r="1.4" fill="#3a0d08"/>
+        <circle cx="70" cy="69" r="1.4" fill="#3a0d08"/>
+        <!-- eye: wide open; flying! -->
+        <circle cx="78" cy="59" r="2.6" fill="#12232f"/>
+        <circle cx="79" cy="58" r="0.9" fill="#cfeff7"/>
+      </g>
+      <!-- speed streaks -->
+      <g stroke="#7fd1e0" stroke-width="1.7" stroke-linecap="round" opacity="0.6" fill="none">
+        <path d="M 132 56 h 12"/>
+        <path d="M 140 66 h 13"/>
+        <path d="M 136 78 h 11"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Name -->
+  <text x="100" y="195" text-anchor="middle" fill="#cfeff7"
+        font-family="Menlo, Consolas, monospace" font-size="17"
+        font-weight="bold" letter-spacing="1">tragweite</text>
+
+  <!-- Border -->
+  <polygon points="100,3 197,60.5 197,170.5 100,228 3,170.5 3,60.5"
+           fill="none" stroke="#7fd1e0" stroke-width="4"/>
+</svg>

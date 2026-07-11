@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use tragweite in your research, please cite it as below."
+type: software
+title: "tragweite: Simulation-Based Design Planning for Precision Psychotherapy Studies"
+authors:
+  - family-names: "Obeser"
+    given-names: "Christian"
+version: 0.0.0.9000
+license: MIT
+repository-code: "https://github.com/chrisobeser/tragweite"
+url: "https://github.com/chrisobeser/tragweite"
+abstract: >-
+  Simulation-based power and design-sensitivity analysis for
+  treatment-effect heterogeneity and patient-therapist matching
+  effects under therapist nesting (caseloads, intraclass
+  correlations, session counts), built on the validated windkanal
+  simulation engine. For these questions no closed-form power
+  formulas exist; the package answers them by simulation against
+  known truth.
+keywords:
+  - power-analysis
+  - study-design
+  - psychotherapy-research
+  - heterogeneous-treatment-effects
+  - multilevel-models
+  - R-package

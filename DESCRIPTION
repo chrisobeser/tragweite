@@ -1,0 +1,29 @@
+Package: tragweite
+Title: Simulation-Based Design Planning for Precision Psychotherapy
+    Studies
+Version: 0.0.0.9000
+Authors@R:
+    person("Christian", "Obeser", email = "gersari99@gmail.com",
+           role = c("aut", "cre"))
+Description: Answers the question that comes before any precision
+    psychotherapy study: can this design detect the effect it is
+    looking for? Simulation-based power and design-sensitivity
+    analysis for treatment-effect heterogeneity and patient-therapist
+    matching effects under therapist nesting (caseloads, intraclass
+    correlations, session counts), built on the validated 'windkanal'
+    simulation engine. For these questions no closed-form power
+    formulas exist; simulation is the only honest answer.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Depends:
+    R (>= 4.1)
+Imports:
+    lmerTest,
+    stats,
+    windkanal
+Suggests:
+    testthat (>= 3.0.0)
+Remotes:
+    chrisobeser/windkanal
+Config/roxygen2/version: 8.0.0
