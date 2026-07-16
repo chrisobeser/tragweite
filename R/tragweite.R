@@ -18,8 +18,20 @@
 #' * `"matching"`: test of the `z:x:c` triple interaction (patient
 #'   attribute x therapist attribute x treatment)
 #'
+#' **Null calibration of the matching criterion:** with
+#' `tau_c = 0` and `tau_xc = 0` the generator draws no therapist
+#' attribute (it would not act). In the field, C is *measured*
+#' whether or not it acts -- so for `effect = "matching"` tragweite
+#' attaches an inert standard-normal therapist attribute to such
+#' worlds (own seed stream `seed + i + 1e7`, decoupled from the
+#' world's draws). The triple test then runs against a measured,
+#' truly effect-free attribute, which is exactly what a null world
+#' looks like from the analyst's chair.
+#'
 #' Failed model fits do not abort the run; they are counted and
-#' reported (`n_failed`), and power is computed on the valid worlds.
+#' reported (`n_failed`, with the first error message as a warning
+#' when any occur). If *every* world fails, the run stops with that
+#' message instead of returning a silent `NaN`.
 #'
 #' @param effect One of `"ate"`, `"moderation"`, `"matching"`.
 #' @param tau True average treatment effect (default 0.5).
@@ -58,16 +70,39 @@ tragweite <- function(effect = c("ate", "moderation", "matching"),
          "evaluation and are mandatory.", call. = FALSE)
   }
   detected <- rep(NA, reps)
+  first_error <- NULL
   for (i in seq_len(reps)) {
     s <- windkanal::sim_stream(
       n_therapists = n_therapists, patients_per_therapist = caseload,
       n_sessions = n_sessions, icc = icc, z_level = z_level,
       tau = tau, tau_x = tau_x, tau_c = tau_c, tau_xc = tau_xc,
       seed = seed + i)
+    if (effect == "matching" && is.null(s$therapist_c)) {
+      # Null calibration: in the field C is MEASURED whether or not
+      # it acts, so a null world carries a measured, inert attribute.
+      # Drawn from its own seed stream so the world's draws are
+      # untouched.
+      set.seed(seed + i + 1e7)
+      c_inert <- stats::rnorm(n_therapists)
+      s$therapist_c <- c_inert[s$therapist_id]
+    }
     detected[i] <- tryCatch(.detect(s, effect, alpha),
-                            error = function(e) NA)
+                            error = function(e) {
+                              if (is.null(first_error)) {
+                                first_error <<- conditionMessage(e)
+                              }
+                              NA
+                            })
   }
   n_valid <- sum(!is.na(detected))
+  if (n_valid == 0) {
+    stop("All ", reps, " worlds failed to fit -- first error: ",
+         first_error, call. = FALSE)
+  }
+  if (!is.null(first_error)) {
+    warning(reps - n_valid, " of ", reps, " fits failed -- ",
+            "first error: ", first_error, call. = FALSE)
+  }
   power <- mean(detected, na.rm = TRUE)
   out <- list(
     power = power,
@@ -91,6 +126,11 @@ tragweite <- function(effect = c("ate", "moderation", "matching"),
 #' @keywords internal
 .detect <- function(s, effect, alpha) {
   d <- as.data.frame(s)
+  if (effect == "matching" && is.null(d$therapist_c)) {
+    stop("matching requires a therapist attribute in the stream; ",
+         "a constant c = 0 would make the triple test degenerate.",
+         call. = FALSE)
+  }
   d$c <- if (!is.null(d$therapist_c)) d$therapist_c else 0
   f <- switch(effect,
     ate        = score ~ z + (1 | therapist_id) + (1 | patient_id),

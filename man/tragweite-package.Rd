@@ -6,6 +6,8 @@
 \title{tragweite: Simulation-Based Design Planning for Precision
 Psychotherapy Studies}
 \description{
+\if{html}{\figure{logo.svg}{options: style='float: right' alt='logo' width='120'}}
+
 Answers the question that comes before any precision psychotherapy study: can this design detect the effect it is looking for? Simulation-based power and design-sensitivity analysis for treatment-effect heterogeneity and patient-therapist matching effects under therapist nesting (caseloads, intraclass correlations, session counts), built on the validated 'windkanal' simulation engine. For these questions no closed-form power formulas exist; simulation is the only honest answer.
 }
 \author{

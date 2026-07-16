@@ -72,8 +72,20 @@ for matching will follow the dyadic method's selection rule):
 attribute x therapist attribute x treatment)
 }
 
+\strong{Null calibration of the matching criterion:} with
+\code{tau_c = 0} and \code{tau_xc = 0} the generator draws no therapist
+attribute (it would not act). In the field, C is \emph{measured}
+whether or not it acts -- so for \code{effect = "matching"} tragweite
+attaches an inert standard-normal therapist attribute to such
+worlds (own seed stream \code{seed + i + 1e7}, decoupled from the
+world's draws). The triple test then runs against a measured,
+truly effect-free attribute, which is exactly what a null world
+looks like from the analyst's chair.
+
 Failed model fits do not abort the run; they are counted and
-reported (\code{n_failed}), and power is computed on the valid worlds.
+reported (\code{n_failed}, with the first error message as a warning
+when any occur). If \emph{every} world fails, the run stops with that
+message instead of returning a silent \code{NaN}.
 }
 \examples{
 \donttest{
