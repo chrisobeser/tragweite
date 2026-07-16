@@ -1,7 +1,7 @@
 Package: tragweite
 Title: Simulation-Based Design Planning for Precision Psychotherapy
     Studies
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R:
     person("Christian", "Obeser", email = "gersari99@gmail.com",
            role = c("aut", "cre"))
@@ -23,7 +23,10 @@ Imports:
     stats,
     windkanal
 Suggests:
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
+VignetteBuilder: knitr
 Remotes:
     chrisobeser/windkanal
 Config/roxygen2/version: 8.0.0

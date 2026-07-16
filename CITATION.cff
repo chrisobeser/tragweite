@@ -5,7 +5,7 @@ title: "tragweite: Simulation-Based Design Planning for Precision Psychotherapy 
 authors:
   - family-names: "Obeser"
     given-names: "Christian"
-version: 0.0.0.9000
+version: 0.1.0
 license: MIT
 repository-code: "https://github.com/chrisobeser/tragweite"
 url: "https://github.com/chrisobeser/tragweite"

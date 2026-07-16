@@ -1,0 +1,124 @@
+---
+title: "The detection ceiling: what a design could ever have shown"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{The detection ceiling: what a design could ever have shown}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+```
+
+## Tool null or world null
+
+Null results are common in precision psychotherapy, and they are
+ambiguous in a specific way. A study that finds no patient-therapist
+matching effect has learned one of two very different things: either
+the effect is absent in the world, or the design could never have
+seen it. Before a null is allowed to mean anything, someone has to
+ask what the design was capable of showing.
+
+`design_ceiling()` answers that question retrospectively. Given the
+structure of an existing study, it walks an ascending grid of effect
+sizes and reports the smallest effect the design detects with a
+target power: the design's detection ceiling. Effects below the
+ceiling were never observable. A null from such a design is a fact
+about the design, not about the world.
+
+## A routine-care structure
+
+Routine settings share a recognizable shape: many therapists, small
+caseloads, few measured sessions. Here is a stylized version of that
+shape, 60 therapists with 5 patients each and four measured
+sessions, diagnosed for a matching effect (the patient-by-therapist
+interaction that assignment policies would exploit):
+
+```{r ceiling-routine}
+library(tragweite)
+
+routine <- design_ceiling(
+  effect       = "matching",
+  effect_grid  = seq(0.2, 0.6, by = 0.1),
+  n_therapists = 60,
+  caseload     = 5,
+  n_sessions   = 4,
+  icc          = 0.10,
+  reps         = 60,
+  seed         = 2026,
+  quiet        = TRUE
+)
+routine
+```
+
+The grid holds the full diagnosis, with a Monte Carlo standard
+error for every rate:
+
+```{r}
+routine$grid
+```
+
+Two reading rules. First, the ceiling is the design's property, not
+the effect's: reporting "no matching effect" from this study means
+"no matching effect at least as large as the ceiling". Second, the
+grid is computed with common random numbers (the same base seed in
+every cell), so the power curve is smooth in the effect size and
+differences along the grid are not simulation noise.
+
+## Where the ceiling moves: measurement, not recruitment
+
+The instinctive repair for an underpowered design is more patients.
+For nested designs the cheaper lever is usually measurement. Keep
+the recruitment identical, 300 patients in the same caseload
+structure, and double the measured sessions:
+
+```{r ceiling-repaired}
+repaired <- design_ceiling(
+  effect       = "matching",
+  effect_grid  = seq(0.2, 0.6, by = 0.1),
+  n_therapists = 60,
+  caseload     = 5,
+  n_sessions   = 8,
+  icc          = 0.10,
+  reps         = 60,
+  seed         = 2026,
+  quiet        = TRUE
+)
+repaired
+```
+
+```{r, echo = FALSE}
+vgl <- data.frame(
+  effect   = routine$grid$effect,
+  routine  = routine$grid$power,
+  repaired = repaired$grid$power
+)
+knitr::kable(vgl, digits = 2,
+             caption = "Detection power, 4 vs. 8 measured sessions (same 300 patients).")
+```
+
+Restructuring the same recruitment (fewer therapists with larger
+caseloads) moves these curves far less than measurement does; you
+can verify that in one line by swapping `n_therapists` and
+`caseload` arguments. The pattern is general for this family of
+designs: what the analysis starves for is not more people but more
+signal per person.
+
+## Honest use
+
+- `reps = 60` keeps this vignette quick; for a diagnosis you intend
+  to publish, use `reps = 200` or more and let the reported Monte
+  Carlo standard errors say when enough is enough.
+- The ceiling is relative to the simulated world: an additive
+  product-form matching effect on a standardized outcome, the
+  package's transparent default generator. It prices the design's
+  structure (nesting, caseloads, sessions, ICC), not every
+  possible world.
+- `seed` is mandatory by design. A ceiling you cannot reproduce is
+  an anecdote.
+
+For prospective planning, the same machinery runs forward:
+`tragweite()` for a single design, `design_grid()` for comparing
+several under common random numbers, and `min_design()` for the
+smallest design that reaches a power target.
