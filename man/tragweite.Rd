@@ -15,6 +15,12 @@ tragweite(
   n_sessions = 4,
   icc = 0.1,
   z_level = c("patient", "therapist"),
+  tau_xc_form = "product",
+  window_delta = 0.5,
+  rel_x = 1,
+  rel_c = 1,
+  detector = c("lmer", "duet_s"),
+  duet_rule = c(delta_sd = 0.018, cut_sd = 0.52),
   reps = 200,
   alpha = 0.05,
   seed
@@ -38,17 +44,49 @@ for \code{"moderation"} and \code{"matching"}).}
 evaluation; passed to \code{\link[windkanal:sim_stream]{windkanal::sim_stream()}} (\code{caseload} =
 \code{patients_per_therapist}).}
 
-\item{reps}{Number of simulated worlds (default 200).}
+\item{tau_xc_form, window_delta}{Functional form of the dyadic term,
+passed to the generator (see windkanal; \code{window_delta} is passed
+as the generator's \code{fenster_delta}). Default is the product form.}
 
-\item{alpha}{Test level of the detection criterion (default .05).}
+\item{rel_x, rel_c}{Reliability of the OBSERVED patient / therapist
+attribute (1 = perfectly measured). Below 1 the analysis sees an
+attenuated version (squared correlation with the truth = rel)
+while the truth in the generator is untouched -- measurement error
+on both sides, which attenuates a matching effect twice.}
+
+\item{detector}{\code{"lmer"} (default; Satterthwaite mixed model) or
+\code{"duet_s"} (dyadic-sampler amplitude rule; matching only, and
+currently unavailable -- see the section above). The shipped
+amplitude rule is calibrated on its home world stream and is
+stream-sensitive; for a planning statement use
+\code{\link[=ceiling_certificate]{ceiling_certificate()}}, which always recalibrates the cut on the
+stream it is given. The sampler behind \code{"duet_s"} runs on a
+constant seed (\code{.duet_p_sd(mcmc_seed = 1)}), deliberately: the
+sampler stream is held fixed across worlds so that a power
+difference between two designs is a design difference and not
+sampler noise. The user seed therefore moves the worlds, not the
+sampler.}
+
+\item{duet_rule}{Named vector \code{c(delta_sd, cut_sd)} of the frozen
+v2S amplitude rule (strict cut convention).}
+
+\item{reps}{Number of simulated worlds (default 200; must be >= 1).}
+
+\item{alpha}{Test level of the detection criterion (default .05;
+must be a single number in (0, 1)). Acts on \code{detector = "lmer"}
+only -- the amplitude rule decides via \code{duet_rule}, so for
+\code{detector = "duet_s"} the returned \code{alpha} is \code{NA}.}
 
 \item{seed}{Base random seed (mandatory; world \code{i} uses
-\code{seed + i}).}
+\code{seed + i}). The global RNG state is restored on exit, so a
+\code{tragweite()} call does not move the caller's own stream.}
 }
 \value{
 Object of class \code{"tragweite"}: a list with \code{power},
 \code{mcse}, \code{n_detected}, \code{n_valid}, \code{n_failed}, \code{design}, \code{effect},
-\code{criterion}, \code{alpha}, \code{seed}.
+\code{effect_size}, \code{criterion}, \code{alpha} (\code{NA} where it does not act),
+\code{fa_note} (\code{NULL} unless the detector's false-alarm rate is
+off-nominal), \code{reps}, \code{seed}.
 }
 \description{
 The core question of tragweite: \emph{can this design see the effect it
@@ -61,9 +99,8 @@ For the questions tragweite targets, no closed-form power formulas
 exist.
 }
 \details{
-Detection criteria (v0, all Satterthwaite mixed-model tests --
-validated in the windkanal hardening study; forest-based criteria
-for matching will follow the dyadic method's selection rule):
+Detection criteria (Satterthwaite mixed-model tests, validated
+against the windkanal simulation engine):
 \itemize{
 \item \code{"ate"}: test of the treatment coefficient in
 \code{score ~ z + (1|therapist) + (1|patient)}
@@ -87,6 +124,18 @@ reported (\code{n_failed}, with the first error message as a warning
 when any occur). If \emph{every} world fails, the run stops with that
 message instead of returning a silent \code{NaN}.
 }
+\section{The v2S detector is not available yet}{
+
+\code{detector = "duet_s"} applies an amplitude rule to the posterior of
+a dyadic sampler, \code{windkanal::fit_cate_dyade_v2s()}. That sampler is
+\strong{not part of the public windkanal 0.3.0}; it is planned for
+windkanal 0.4. Until then \code{detector = "duet_s"} (and
+\code{\link[=ceiling_certificate]{ceiling_certificate()}}, which is built on it) stop with an
+explanatory error at the point of call. The default
+\code{detector = "lmer"} needs only \code{windkanal::sim_stream()} and runs
+against the public windkanal 0.3.0 in full.
+}
+
 \examples{
 \donttest{
 tragweite("moderation", tau = 0.5, tau_x = 0.5,

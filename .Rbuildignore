@@ -1,0 +1,7 @@
+^\.github$
+^CITATION\.cff$
+^CONTRIBUTING\.md$
+^validation$
+^\.Rproj\.user$
+^.*\.Rproj$
+^\.DS_Store$

@@ -12,6 +12,12 @@ design_ceiling(
   icc = 0.1,
   n_sessions = 4,
   z_level = "patient",
+  tau_xc_form = "product",
+  window_delta = 0.5,
+  rel_x = 1,
+  rel_c = 1,
+  detector = "lmer",
+  duet_rule = c(delta_sd = 0.018, cut_sd = 0.52),
   fixed = list(tau = 0.3, tau_x = 0, tau_c = 0, tau_xc = 0),
   target = 0.8,
   reps = 200,
@@ -31,8 +37,13 @@ design_ceiling(
 \item{n_therapists, caseload, icc, n_sessions, z_level}{The design
 whose ceiling is diagnosed (scalars).}
 
+\item{tau_xc_form, window_delta, rel_x, rel_c, detector, duet_rule}{As in \code{\link[=tragweite]{tragweite()}} (congruence form, reliability on both sides,
+choice of detector). Note that \code{detector = "duet_s"} is not
+available against the public windkanal 0.3.0; see \code{\link[=tragweite]{tragweite()}}.}
+
 \item{fixed}{Named list of the non-varied effect parameters
-(default \code{list(tau = 0.3, tau_x = 0, tau_c = 0, tau_xc = 0)}).}
+(default \code{list(tau = 0.3, tau_x = 0, tau_c = 0, tau_xc = 0)}).
+A partial \code{fixed} is filled in from this default.}
 
 \item{target}{Target power defining the ceiling (default 0.80).}
 
@@ -43,8 +54,9 @@ whose ceiling is diagnosed (scalars).}
 \value{
 Object of class \code{tragweite_ceiling}: list with \code{ceiling}
 (smallest detectable effect, \code{NA} if the grid never reaches
-target), \code{grid} (data.frame effect/power/mcse), \code{design},
-\code{target}, \code{criterion}.
+target), \code{grid} (data.frame effect/power/mcse), \code{fixed} (the
+parameters actually held fixed -- the varied one lives in \code{grid}),
+\code{design}, \code{target}, \code{effect}, \code{criterion}.
 }
 \description{
 The third pillar: given the structure of an EXISTING study
@@ -52,9 +64,13 @@ The third pillar: given the structure of an EXISTING study
 ever have detected? \code{design_ceiling()} walks an ascending effect
 grid with common random numbers (same base seed per cell) and
 returns the smallest effect the design detects with the target
-power -- its detection ceiling. Effects below that line were never
-observable: a published null from such a design is a fact about
-the design, not about the world ("tool null vs. world null").
+power -- its detection ceiling. Effects below that line fall short
+of the target convention; they are not unobservable, and the grid
+states with what probability each of them was in fact detected. The
+further an effect sits below the ceiling, the more a published null
+from such a design is a fact about the design rather than about the
+world ("tool null vs. world null") -- how far, the measured power
+below the ceiling says.
 }
 \details{
 Named \code{design_ceiling} (not \code{ceiling}) to avoid masking

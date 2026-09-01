@@ -1,7 +1,7 @@
 Package: tragweite
 Title: Simulation-Based Design Planning for Precision Psychotherapy
     Studies
-Version: 0.1.0
+Version: 0.2.0
 Authors@R:
     person("Christian", "Obeser", email = "gersari99@gmail.com",
            role = c("aut", "cre"))
@@ -14,6 +14,8 @@ Description: Answers the question that comes before any precision
     simulation engine. For these questions no closed-form power
     formulas exist; simulation is the only honest answer.
 License: MIT + file LICENSE
+URL: https://github.com/chrisobeser/tragweite
+BugReports: https://github.com/chrisobeser/tragweite/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 Depends:
@@ -21,7 +23,8 @@ Depends:
 Imports:
     lmerTest,
     stats,
-    windkanal
+    utils,
+    windkanal (>= 0.3.0)
 Suggests:
     knitr,
     rmarkdown,
@@ -30,3 +33,4 @@ VignetteBuilder: knitr
 Remotes:
     chrisobeser/windkanal
 Config/roxygen2/version: 8.0.0
+Config/testthat/edition: 3

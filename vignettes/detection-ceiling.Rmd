@@ -24,8 +24,11 @@ ask what the design was capable of showing.
 structure of an existing study, it walks an ascending grid of effect
 sizes and reports the smallest effect the design detects with a
 target power: the design's detection ceiling. Effects below the
-ceiling were never observable. A null from such a design is a fact
-about the design, not about the world.
+ceiling fall short of that convention -- they are not unobservable,
+and the grid states with what probability each of them was in fact
+detected. The further an effect sits below the ceiling, the more a
+published null from such a design is a fact about the design rather
+than about the world.
 
 ## A routine-care structure
 
@@ -66,11 +69,12 @@ grid is computed with common random numbers (the same base seed in
 every cell), so the power curve is smooth in the effect size and
 differences along the grid are not simulation noise.
 
-## Where the ceiling moves: measurement, not recruitment
+## Does more measurement move the ceiling?
 
 The instinctive repair for an underpowered design is more patients.
-For nested designs the cheaper lever is usually measurement. Keep
-the recruitment identical, 300 patients in the same caseload
+Measurement is the other candidate lever, and it is usually cheaper.
+`design_ceiling()` lets you price it before committing to either.
+Keep the recruitment identical, 300 patients in the same caseload
 structure, and double the measured sessions:
 
 ```{r ceiling-repaired}
@@ -89,21 +93,34 @@ repaired
 ```
 
 ```{r, echo = FALSE}
-vgl <- data.frame(
+comparison <- data.frame(
   effect   = routine$grid$effect,
   routine  = routine$grid$power,
   repaired = repaired$grid$power
 )
-knitr::kable(vgl, digits = 2,
+knitr::kable(comparison, digits = 2,
              caption = "Detection power, 4 vs. 8 measured sessions (same 300 patients).")
 ```
 
-Restructuring the same recruitment (fewer therapists with larger
-caseloads) moves these curves far less than measurement does; you
-can verify that in one line by swapping `n_therapists` and
-`caseload` arguments. The pattern is general for this family of
-designs: what the analysis starves for is not more people but more
-signal per person.
+Read that table against the Monte Carlo standard errors in
+`routine$grid`, not as a ranking. At `reps = 60` the two columns sit
+within about one and a quarter combined standard errors of each
+other at every grid point, the cell-by-cell differences change sign,
+and **both designs land on the same ceiling of 0.40**. On this evidence,
+doubling the measured sessions bought nothing that this run can
+distinguish from noise.
+
+That is the honest reading, and it is the point of the exercise
+rather than a disappointment: a design lever has to be *priced*
+before it is trusted, and here the price came back as "no detectable
+effect at this resolution". Whether the lever helps at all is a
+question this comparison cannot settle. To settle it, raise `reps`
+until the standard errors are smaller than the difference you care
+about, and compare the ceilings again; with `reps = 60` a difference
+of less than roughly 0.15 in power is simply not resolvable. The
+same discipline applies to the recruitment lever: swapping
+`n_therapists` and `caseload` produces another comparison that must
+be read against its own standard errors before it means anything.
 
 ## Honest use
 

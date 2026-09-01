@@ -14,6 +14,14 @@
 #' @return A `data.frame` with one row per grid point: the design
 #'   columns, `power`, `mcse`, `n_failed`. Class
 #'   `c("tragweite_grid", "data.frame")`.
+#' @section Limitations:
+#' `design_grid()` and [min_design()] do **not** pass `tau_xc_form`,
+#'   `window_delta`, `rel_x`, `rel_c`, `detector` and `duet_rule`
+#'   through to [tragweite()] -- unlike [design_ceiling()]. Every grid
+#'   point therefore runs the product form, perfectly measured
+#'   attributes and the `"lmer"` detector, whatever the surrounding
+#'   analysis assumes. To grid over reliability or congruence form,
+#'   call [tragweite()] in your own loop.
 #' @export
 design_grid <- function(effect, tau = 0.5, tau_x = 0, tau_c = 0,
                         tau_xc = 0, n_therapists, caseload,
@@ -21,6 +29,8 @@ design_grid <- function(effect, tau = 0.5, tau_x = 0, tau_c = 0,
                         z_level = "patient", reps = 200,
                         alpha = 0.05, seed, quiet = FALSE) {
   if (missing(seed)) stop("`seed` is mandatory.", call. = FALSE)
+  .check_alpha(alpha)
+  .check_reps(reps)
   g <- expand.grid(tau = tau, tau_x = tau_x, tau_c = tau_c,
                    tau_xc = tau_xc, n_therapists = n_therapists,
                    caseload = caseload, icc = icc)
@@ -57,6 +67,7 @@ design_grid <- function(effect, tau = 0.5, tau_x = 0, tau_c = 0,
 #' @return A list with `design` (the chosen row, or `NULL` if no
 #'   candidate reaches the target) and `grid` (all evaluated rows,
 #'   ordered by N).
+#' @inheritSection design_grid Limitations
 #' @export
 min_design <- function(effect, tau = 0.5, tau_x = 0, tau_c = 0,
                        tau_xc = 0, n_therapists, caseload,
@@ -65,11 +76,13 @@ min_design <- function(effect, tau = 0.5, tau_x = 0, tau_c = 0,
                        reps = 200, alpha = 0.05, seed,
                        quiet = FALSE) {
   if (missing(seed)) stop("`seed` is mandatory.", call. = FALSE)
+  .check_alpha(alpha)
+  .check_reps(reps)
   g <- expand.grid(n_therapists = n_therapists, caseload = caseload)
   g$N <- g$n_therapists * g$caseload
   g <- g[order(g$N, g$n_therapists), ]
   g$power <- g$mcse <- NA_real_
-  treffer <- NULL
+  hit <- NULL
   for (k in seq_len(nrow(g))) {
     r <- tragweite(effect = effect, tau = tau, tau_x = tau_x,
                    tau_c = tau_c, tau_xc = tau_xc,
@@ -82,7 +95,7 @@ min_design <- function(effect, tau = 0.5, tau_x = 0, tau_c = 0,
       message(sprintf("N = %4d (%d x %d): power %.3f", g$N[k],
                       g$n_therapists[k], g$caseload[k], g$power[k]))
     }
-    if (r$power >= target) { treffer <- g[k, ]; break }
+    if (r$power >= target) { hit <- g[k, ]; break }
   }
-  list(design = treffer, grid = g[!is.na(g$power), ])
+  list(design = hit, grid = g[!is.na(g$power), ])
 }
