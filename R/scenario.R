@@ -12,7 +12,7 @@
 #'
 #' Available scenarios:
 #' * `"field_realistic"`: tau = 0.2, tau_x = 0.2 -- the windkanal
-#'   realistic-effect cell; a direct DGM specification, no translation
+#'   realistic-effect configuration; a direct DGM specification, no translation
 #'   involved.
 #' * `"personalization_floor"`: anchor d = 0.14 (95% CI 0.08-0.20),
 #'   the risk-of-bias-adjusted meta-analytic floor for personalized
@@ -38,7 +38,7 @@ scenario <- function(name = c("field_realistic",
     field_realistic = list(
       name = name,
       anchor = "tau = 0.2, tau_x = 0.2 (outcome-SD units)",
-      source = "windkanal realistic-effect cell (real_dyad), anchored to routine-care meta-analytic ranges",
+      source = "windkanal realistic-effect configuration, anchored to routine-care meta-analytic ranges",
       estimand_note = "Direct DGM specification; no translation involved.",
       suggested_args = list(tau = 0.2, tau_x = 0.2)),
     personalization_floor = list(

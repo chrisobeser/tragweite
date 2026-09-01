@@ -46,3 +46,14 @@ returns the first whose estimated power reaches \code{target}. The MCSE
 is reported alongside; near the boundary, increase \code{reps} before
 committing to a design.
 }
+\section{Limitations}{
+
+\code{design_grid()} and \code{\link[=min_design]{min_design()}} do \strong{not} pass \code{tau_xc_form},
+\code{window_delta}, \code{rel_x}, \code{rel_c}, \code{detector} and \code{duet_rule}
+through to \code{\link[=tragweite]{tragweite()}} -- unlike \code{\link[=design_ceiling]{design_ceiling()}}. Every grid
+point therefore runs the product form, perfectly measured
+attributes and the \code{"lmer"} detector, whatever the surrounding
+analysis assumes. To grid over reliability or congruence form,
+call \code{\link[=tragweite]{tragweite()}} in your own loop.
+}
+

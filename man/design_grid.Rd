@@ -43,3 +43,14 @@ All grid points share the same world seeds (common random numbers),
 so \emph{comparisons between designs} carry less Monte Carlo noise than
 the individual power estimates suggest.
 }
+\section{Limitations}{
+
+\code{design_grid()} and \code{\link[=min_design]{min_design()}} do \strong{not} pass \code{tau_xc_form},
+\code{window_delta}, \code{rel_x}, \code{rel_c}, \code{detector} and \code{duet_rule}
+through to \code{\link[=tragweite]{tragweite()}} -- unlike \code{\link[=design_ceiling]{design_ceiling()}}. Every grid
+point therefore runs the product form, perfectly measured
+attributes and the \code{"lmer"} detector, whatever the surrounding
+analysis assumes. To grid over reliability or congruence form,
+call \code{\link[=tragweite]{tragweite()}} in your own loop.
+}
+

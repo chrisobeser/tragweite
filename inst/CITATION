@@ -5,6 +5,6 @@ bibentry(
   title   = "tragweite: Simulation-based design planning for precision psychotherapy",
   author  = person("Christian", "Obeser"),
   year    = "2026",
-  note    = "R package, development version",
+  note    = "R package version 0.2.0",
   url     = "https://github.com/chrisobeser/tragweite"
 )

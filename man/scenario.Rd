@@ -29,7 +29,7 @@ first roadmap pillar.)
 Available scenarios:
 \itemize{
 \item \code{"field_realistic"}: tau = 0.2, tau_x = 0.2 -- the windkanal
-realistic-effect cell; a direct DGM specification, no translation
+realistic-effect configuration; a direct DGM specification, no translation
 involved.
 \item \code{"personalization_floor"}: anchor d = 0.14 (95\% CI 0.08-0.20),
 the risk-of-bias-adjusted meta-analytic floor for personalized

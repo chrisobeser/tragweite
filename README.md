@@ -69,15 +69,33 @@ scenario("personalization_floor")
 #> Scenario 'personalization_floor'
 #>   Anchor : d = 0.14 [0.08, 0.20], risk-of-bias-adjusted
 #>   Source : Nye, Delgadillo & Barkham (2023), J Consult Clin Psychol, doi:10.1037/ccp0000820
-#>   Note   : Strategy-level ATE of personalized vs. standardized care -- NOT a moderation
-#>            amplitude. No defensible automatic mapping to tau_x exists yet; use as a
-#>            sensitivity anchor and report the assumption you choose.
+#>   Note   : Strategy-level ATE of personalized vs. standardized care -- NOT a moderation amplitude. No defensible automatic mapping to tau_x exists yet; use as a sensitivity anchor and report the assumption you choose.
 #>   Ready-to-use args: none (see note) -- anchor only.
 ```
 
 The refusal is a feature. A strategy-level *d* is not a moderation
 amplitude, and a tool that silently converted one into the other
 would manufacture precision it does not have.
+
+**Diagnose a study that already ran.** `design_ceiling()` walks an
+ascending effect grid under common random numbers and returns the
+smallest effect the design detects at a target power: its detection
+ceiling. Effects below that line fall short of the convention -- they
+are not unobservable, and the grid says with what probability each of
+them was in fact detected. That is what separates "the effect is
+absent" from "the design could not have seen it". The vignette
+`detection-ceiling` works through a routine-care structure and then
+prices a design lever against it -- including the case where the
+answer is "this run cannot tell", which is what a Monte Carlo
+standard error is for.
+
+**Certify a pairing design before you run it.**
+`ceiling_certificate()` produces a preregistrable detection
+certificate: it recalibrates the decision rule's cut on your own
+simulated world stream and then measures power across the effect grid.
+Recalibration is mandatory rather than optional, because the frozen
+rule is stream-sensitive. See the status note below -- this function
+needs a windkanal sampler that is not public yet.
 
 ## How it relates to windkanal
 
@@ -121,18 +139,42 @@ their own parameters.
 
 ## Status
 
-**Early development version.** The v0 core works and is tested:
-`tragweite()`, `design_grid()`, `min_design()`, and the `scenario()`
-registry, with unit tests and continuous integration from the first
-commit. Detection criteria are parametric so far (Satterthwaite tests
-of the treatment, interaction, and triple-interaction coefficients);
-estimator-based criteria follow as their decision rules pass
-validation in windkanal. The pipeline is cross-checked against the
-audited windkanal validation run: with identical seeds it reproduces
-the reference power exactly (0.6300, all 300 world-level decisions
-identical), and fresh-seed replications agreed within two Monte Carlo
-standard errors in five of six checks (`validation/cross_check_v0.R`).
-Interfaces may still change.
+**Early development version.** Working and tested: `tragweite()`,
+`design_grid()`, `min_design()`, `design_ceiling()` and the
+`scenario()` registry, with unit tests and continuous integration
+from the first commit -- currently 31 blocks
+and 135 assertions, 0 failures against the public windkanal 0.3.0.
+The pipeline is cross-checked against the windkanal validation run: on
+identical seeds it reproduces the reference power exactly (0.6300),
+and fresh-seed replications agreed within two Monte Carlo standard
+errors in five of six cells, the sixth being a correlated
+two-sigma fluctuation in a pair of cells that share their worlds
+(`validation/cross_check_v0.R` asserts the exact-seed reproduction and
+prints the fresh-seed table). Interfaces may still change.
+
+**One entry point is not usable yet, and says so.** The amplitude
+detector `detector = "duet_s"` and `ceiling_certificate()` are built
+on `windkanal::fit_cate_dyade_v2s()`. The public windkanal 0.3.0 ships
+`fit_cate_dyade_v2p` but **not** `fit_cate_dyade_v2s`; that sampler is
+planned for windkanal 0.4. Both entry points therefore stop
+immediately with an error naming the missing function and the version
+that will provide it, rather than failing somewhere deep in a world
+loop:
+
+``` r
+tragweite("matching", tau_xc = .3, n_therapists = 20, caseload = 10,
+          detector = "duet_s", reps = 200, seed = 1)
+#> Error: detector = 'duet_s' requires windkanal's v2S sampler
+#> (fit_cate_dyade_v2s), which is planned for windkanal 0.4; the public
+#> windkanal 0.3.0 does not ship it. Use detector = 'lmer' for the
+#> Satterthwaite criterion, which runs against windkanal 0.3.0 in full.
+```
+
+Detection criteria are therefore parametric in practice for now
+(Satterthwaite tests of the treatment, interaction, and
+triple-interaction coefficients). Everything else in the package runs
+against the public windkanal 0.3.0, and the test suite covers both the
+working path and the guard.
 
 ## Roadmap
 
@@ -148,7 +190,7 @@ Three pillars make this its own package rather than a wrapper:
    design that reaches target power given per-therapist, per-patient,
    and per-wave costs, and which design lever buys the most power per
    euro.
-3. **Retrospective design diagnosis.** `ceiling()`: given the
+3. **Retrospective design diagnosis.** `design_ceiling()`: given the
    structure of an existing dataset, which effects could it ever have
    detected? This turns published null findings into testable claims
    about designs, separating "the effect is absent" from "the design
@@ -159,12 +201,21 @@ Nearer term, in rough order:
 - [x] v0 core: `tragweite()`, `design_grid()` (common random
       numbers), `min_design()`, anchored `scenario()` registry,
       Satterthwaite detection criteria
-- [ ] `ceiling()`: retrospective design diagnosis (next)
-- [ ] Design dimensions that formulas never had: informative dropout,
-      measurement reliability, realistic caseload distributions,
+- [x] `design_ceiling()`: retrospective design diagnosis, with the
+      `detection-ceiling` vignette
+- [x] Measurement reliability as a design dimension (`rel_x`,
+      `rel_c`) and the congruence form (`tau_xc_form`,
+      `window_delta`)
+- [ ] `ceiling_certificate()` usable in practice -- waiting on the
+      v2S sampler in windkanal 0.4
+- [ ] The remaining design dimensions that formulas never had:
+      informative dropout, realistic caseload distributions,
       recruitment timelines
-- [ ] Estimator-based detection criteria, added as their decision
-      rules pass validation in windkanal
+- [ ] Further estimator-based detection criteria, added as their
+      decision rules pass validation in windkanal
+- [ ] Estimand translation layer: turn each `scenario()` anchor into
+      a derivation with stated assumptions, or say none is defensible
+- [ ] Design economics: `min_design(budget = ...)`
 - [ ] Preregistration report generator: power text with seeds,
       versions, and criteria, ready to paste
 - [ ] Shiny design explorer
